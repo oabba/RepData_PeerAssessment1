@@ -35,19 +35,6 @@ We utilize *dplyr* package to manipulate the dataset. We utilize chain operation
 # loading the dplyr package
 library(dplyr)
 ```
-
-```
-## 
-## Attaching package: 'dplyr'
-## 
-## The following object is masked from 'package:stats':
-## 
-##     filter
-## 
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
 Firstly, we use group_by() function in *dplyr* package to group the dataset by date and then utilize summarize() function to compute the number of steps taken each day. The resulting dataframe is stored in a variable avg.daily. 
 
 ```r
@@ -67,7 +54,7 @@ rug(avg.daily$dailySteps)
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
-
+##Mean and the Median of steps taken
 The mean of the total number of steps taken daily is as follows
 
 
@@ -119,7 +106,7 @@ with(avg.steps.interval,
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
-
+##Interval in which maximum average number of steps taken
 The maximum average number of steps taken and the respective interval are presented in the form of a dataframe with one row as follows 
 
 

@@ -46,7 +46,7 @@ hist(avg.daily$dailySteps, breaks = 7, main="Histogram",
 rug(avg.daily$dailySteps)
 ```
 
-
+##Mean and the Median of steps taken
 The mean of the total number of steps taken daily is as follows
 
 
@@ -84,7 +84,7 @@ with(avg.steps.interval,
           ylab = "Average number of steps"))
 ```
 
-
+##Interval in which maximum average number of steps taken
 The maximum average number of steps taken and the respective interval are presented in the form of a dataframe with one row as follows 
 
 
