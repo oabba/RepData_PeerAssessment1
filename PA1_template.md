@@ -3,10 +3,10 @@ title: "Reproducible Research - Activity monitoring"
 output: html_document
 ---
 
-This work is done in fulfillment of first peer assessment of course Reproducible researc. We download the activity monitoring data of a single person and report some statistics and plot to get insights into the downloaded dataset. 
+This work is done in fulfillment of first peer assessment of course Reproducible research. We download the activity monitoring data of a single person and report some statistics and plot to get insights into the downloaded dataset. 
 
 ##Loading and preprocessing the data
-In this section, we firstly unzip the data since the data files are in zip format. We then read the data file named "activity.csv" using read.csv() function. It is given that the missing values in the file are coded as "NA", so we set the appropriate argument of the function accordingly and we instruct the read.csv() function not to convert the strings to factors. The loaded dataset is stored in a dataframe variable of rawData. 
+In this section, we firstly unzip the data since the data files are in zip format. We then read the data file named "activity.csv" using read.csv() function. It is given that the missing values in the file are coded as "NA", so we set the na.strings argument to "NA". We also set the stringsAsFactors argument to FALSE since the strings are converted to factor variables by default in the read.csv() function. The loaded dataset is stored in a dataframe variable of rawData. 
 
 ```r
 unzip("activity.zip") 
@@ -34,6 +34,19 @@ We utilize *dplyr* package to manipulate the dataset. We utilize chain operation
 ```r
 # loading the dplyr package
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
 ```
 Firstly, we use group_by() function in *dplyr* package to group the dataset by date and then utilize summarize() function to compute the number of steps taken each day. The resulting dataframe is stored in a variable avg.daily. 
 
@@ -107,27 +120,42 @@ with(avg.steps.interval,
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
 ##Interval in which maximum average number of steps taken
-The maximum average number of steps taken and the respective interval are presented in the form of a dataframe with one row as follows 
-
+We subset the dataframe to return the row with an interval that corresponds to the maximum average number of steps. This is accomplished using simple subsetting on the dataframe as follows. The returned dataframe with the interval and corresponding average number of steps is also shown.
 
 
 ```r
 # Interval in which the maximum steps are taken
-avg.steps.interval[avg.steps.interval$avg.steps.in.interval==max(avg.steps.interval$avg.steps.in.interval),]
+max.interval.steps <- avg.steps.interval[avg.steps.interval$avg.steps.in.interval==max(avg.steps.interval$avg.steps.in.interval),]
+```
+
+Interval with maximum number of steps is as follows
+
+```r
+# Interval in which the maximum steps are taken
+as.numeric(max.interval.steps[1,1])
 ```
 
 ```
-## Source: local data frame [1 x 2]
-## 
-##   interval avg.steps.in.interval
-## 1      835              206.1698
+## [1] 835
 ```
+The number of steps in the interval shown above are as follows
+
+```r
+# Interval in which the maximum steps are taken
+as.numeric(max.interval.steps[1,2])
+```
+
+```
+## [1] 206.1698
+```
+
+
 
 ##Imputing missing values
 Recall that our analysis so far has been based ignoring the missing data. It can induce some bias in our analysis. let us now, impute (fill) the missing values in the original dataframe which was stored in a dataframe variable rawData. It is to remark that we just utilitse the mean value of the number of steps taken in an interval, computed by ignoring the missing values to impute the missing values. 
 
 
-Firstly, we define a vector called 'intervals' in which is the 'interval' column of the dataframe rawData. Recall, rawData contains the original data. We then define another vector called 'avg.steps' that contains the average number of steps corresponding to the 'interval' vector. We define the 'avg.steps' vector using the sapply() function in which we define an anonymous function that transforms an interval to the average number of steps taken in it. Note that sapply() is implements a *for* loop over its argument. 
+Firstly, we define a vector called 'intervals' in which is the 'interval' column of the dataframe rawData. Recall, rawData contains the original data. We then define another vector called 'avg.steps' that contains the average number of steps corresponding to the 'interval' vector. We define the 'avg.steps' vector using the sapply() function in which we define an anonymous function that transforms an interval to the average number of steps taken in it. Recall that sapply() is a computationally efficient implementation of a *for* loop over each element of its first argument. In each iteration, a function defined as its second argument of sapply() is applied over each element of its first arugment. 
 
 
 ```r
@@ -173,7 +201,7 @@ hist(avg.daily$dailySteps, breaks = 7, main="Histogram",
 rug(avg.daily$dailySteps)
 ```
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png) 
 
 
 The mean of the total number of steps taken daily is as follows
@@ -216,7 +244,7 @@ In this section, we investigat the activity patterns between weekdays and the we
 newData <- mutate(newData, dayType=weekdays(date))
 ```
 
-We utilise the dayType variable of the newData dataframe to make yet another factor variable called weekend with two levels "yes" and "no"
+We utilise the dayType variable of the newData dataframe to make yet another factor variable called weekend with two levels "weekday" and "weekend"
 
 
 ```r
@@ -235,16 +263,8 @@ newData.dayType <- newData %>%
   summarize(avg.steps.in.interval=mean(steps))
 ```
 
-We now make a panel plot with two time series plots consisting of the average number of steps taken daily as a function of interval. One plot consist of weekedn data and the other consist of the work day data. 
+We now utilise lattice plotting system in *R* to make a panel plot with two time series plots consisting of the average number of steps taken daily as a function of interval. One plot consist of weekend data and the other consist of the work day data. 
 
-
-```r
-names(newData.dayType)
-```
-
-```
-## [1] "interval"              "weekend"               "avg.steps.in.interval"
-```
 
 ```r
 library(lattice)
@@ -254,4 +274,4 @@ xyplot(avg.steps.in.interval~interval|weekend, type="l", layout=c(1,2),
 )
 ```
 
-![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22-1.png) 
+![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24-1.png) 
